@@ -10,14 +10,25 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+  console.log('a user connected');
+
   socket.on('chat message', (msg) => {
     io.emit('chat message', msg);
   });
+
+  socket.on('typing', () => {
+    socket.broadcast.emit('typing', socket.id);
+  });
+
+  socket.on('stop typing', () => {
+    socket.broadcast.emit('stop typing', socket.id);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
 });
 
-io.on('connection', (socket) => {
-  socket.broadcast.emit('hi');
-});
 
 server.listen(3000, () => {
 	console.log('listening on *:3000');
